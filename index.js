@@ -28,12 +28,46 @@ function initCanvas(canvas, arraySize) {
 
 function GenerateArrayBtn() {
     initCanvas(canvas, arraySize)
-    sortingAlgo = document.querySelector('input[name="btnradio"]:checked').id
-    console.log(sortingAlgo)
 }
 
 function SortArrayBtn() { 
+    document.getElementById("SortArrayBtn").disabled = true
+    sortingAlgo = document.querySelector('input[name="algoRadioBtn"]:checked').id
+    console.log(sortingAlgo)
+}
 
+function sort(sortingAlgo) {
+    switch(sortingAlgo) {
+        case "selectionSort":
+        case "insertionSort":
+        case "bubbleSort":
+        case "mergeSort":
+        case "quickSort":
+        case "radixSort":
+        case "heapSort":
+    }
+}
+
+function selectionSort() {
+    
+}
+function insertionSort() {
+    
+}
+function bubbleSort() {
+    
+}
+function mergeSort() {
+    
+}
+function quickSort() {
+    
+}
+function radixSort() {
+    
+}
+function heapSort() {
+    
 }
 
 arraySize = 161
