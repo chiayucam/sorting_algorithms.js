@@ -117,8 +117,69 @@ async function bubbleSort(elements) {
         }
     }
 }
-function mergeSort() {
-    
+async function mergeSort(elements) {
+    async function merge(elements, leftStart, leftEnd, rightStart, rightEnd, delay) {
+        let mergedArray = []
+        let leftVal, rightVal
+        let startIdx = leftStart
+        let timeout = 10
+        while ((leftStart <= leftEnd) && (rightStart <= rightEnd)) {
+            leftVal = getVal(elements.item(leftStart))
+            rightVal = getVal(elements.item(rightStart))
+            if (leftVal <= rightVal) {
+                currOn(elements.item(leftStart))
+                mergedArray.push(leftVal)
+                await new Promise(r => setTimeout(r, timeout));
+                currOff(elements.item(leftStart))
+                leftStart++
+            }
+            else {
+                currOn(elements.item(rightStart))
+                mergedArray.push(rightVal)
+                await new Promise(r => setTimeout(r, timeout));
+                currOff(elements.item(rightStart))
+                rightStart++
+            }
+        }
+        while (leftStart <= leftEnd) {
+            leftVal = getVal(elements.item(leftStart))
+            currOn(elements.item(leftStart))
+            mergedArray.push(leftVal)
+            await new Promise(r => setTimeout(r, timeout));
+            currOff(elements.item(leftStart))
+            leftStart++
+        }
+        while (rightStart <= rightEnd) {
+            rightVal = getVal(elements.item(rightStart))
+            currOn(elements.item(rightStart))
+            mergedArray.push(rightVal)
+            await new Promise(r => setTimeout(r, timeout));
+            currOff(elements.item(rightStart))
+            rightStart++
+        }
+        await mergeVal(elements, mergedArray, startIdx, delay)
+    }
+
+    const delay = getDelay()
+    let length = 2
+    let leftStart, leftEnd, rightStart, rightEnd
+    while (~~(length/2)<elements.length) {
+        for (let i=0; i<elements.length; i+=length) {
+            leftStart = i
+            leftEnd = i+~~(length/2)-1
+            rightStart = i+~~(length/2)
+            rightEnd = i+~~(length)-1
+            if (leftEnd >= elements.length-1) {
+                break
+            }
+            else if (rightEnd > elements.length-1) {
+                rightEnd = elements.length-1
+            }
+            await merge(elements, leftStart, leftEnd, rightStart, rightEnd, delay)
+        }
+        length *= 2
+    }
+
 }
 function quickSort() {
     
@@ -132,6 +193,10 @@ function heapSort() {
 
 function getVal(element) {
     return parseInt(element.style.height.slice(0, -2))
+}
+
+function setVal(element, val) {
+    element.style.height = val.toString()+"px"
 }
 
 function getDelay() {
@@ -149,6 +214,17 @@ async function swapVal(element1, element2, delay) {
     element2.style.backgroundColor = "#5093e3"
 }
 
-arraySize = 99
-canvas = document.getElementById("graph-canvas")
+async function mergeVal(elements, mergedArray, startIdx, delay) {
+    for (let i=0; i<mergedArray.length; i++) {
+        setVal(elements.item(startIdx+i), mergedArray[i])
+        elements.item(startIdx+i).style.backgroundColor = "#ca84dd"
+        await new Promise(r => setTimeout(r, delay));
+        elements.item(startIdx+i).style.backgroundColor = "#5093e3"
+    }
+    
+}
+
+
+let arraySize = 99
+let canvas = document.getElementById("graph-canvas")
 canvas = initCanvas(canvas, arraySize)
