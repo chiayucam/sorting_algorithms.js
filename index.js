@@ -181,8 +181,34 @@ async function mergeSort(elements) {
     }
 
 }
-function quickSort() {
-    
+async function quickSort(elements) {
+    async function partition(elements, left, right, delay) {
+        let i = left - 1
+        currOn(elements.item(right))
+        for (let j=left; j<right; j++) {
+            if (getVal(elements.item(j)) <= getVal(elements.item(right))) {
+                i++
+                await swapVal(elements.item(i), elements.item(j), delay)
+            }
+        }
+        i++
+        await swapVal(elements.item(i), elements.item(right), delay)
+        return i
+    }
+
+    const delay = getDelay()
+    let stack = [[0, elements.length-1]]
+    let left, mid, right
+    do {
+        [left, right] = stack.pop()
+        mid = await partition(elements, left, right, delay)
+        if (mid + 1 < right) {
+            stack.push([mid+1, right])
+        }
+        if (left < mid - 1) {
+            stack.push([left, mid-1])
+        }
+    } while (stack.length !== 0)
 }
 function radixSort() {
     
