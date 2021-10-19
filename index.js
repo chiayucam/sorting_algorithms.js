@@ -31,7 +31,7 @@ function GenerateArrayBtn() {
     initCanvas(canvas, arraySize)
 }
 
-async function SortArrayBtn() { 
+async function SortArrayBtn() {
     document.getElementById("SortArrayBtn").disabled = true
     document.getElementById("GenerateArrayBtn").disabled = true
     document.getElementById("delayRange").disabled = true
@@ -72,10 +72,10 @@ function currOff(element) {
 async function selectionSort(elements) {
     let min_val, min_idx, curr
     const delay = getDelay()
-    for (let i=0; i<elements.length; i++) {
+    for (let i = 0; i < elements.length; i++) {
         min_val = getVal(elements.item(i))
         min_idx = i
-        for (let j=i+1; j<elements.length; j++) {
+        for (let j = i + 1; j < elements.length; j++) {
             currOn(elements.item(j))
             curr = getVal(elements.item(j))
             if (curr < min_val) {
@@ -86,22 +86,22 @@ async function selectionSort(elements) {
             currOff(elements.item(j))
         }
         await swapVal(elements.item(i), elements.item(min_idx), delay)
-        
+
     }
 }
 
 async function insertionSort(elements) {
     let target, j
     const delay = getDelay()
-    for (let i=1; i<elements.length; i++) {
-        if (i+1 < elements.length){
-            currOn(elements.item(i+1))
+    for (let i = 1; i < elements.length; i++) {
+        if (i + 1 < elements.length) {
+            currOn(elements.item(i + 1))
         }
         target = getVal(elements.item(i))
         j = i
-        
-        while (j > 0 && getVal(elements.item(j-1)) > target) {
-            await swapVal(elements.item(j), elements.item(j-1), delay)
+
+        while (j > 0 && getVal(elements.item(j - 1)) > target) {
+            await swapVal(elements.item(j), elements.item(j - 1), delay)
             j--
         }
     }
@@ -109,14 +109,15 @@ async function insertionSort(elements) {
 
 async function bubbleSort(elements) {
     const delay = getDelay()
-    for (let i=elements.length-1; i>0; i--) {
-        for (let j=1; j<=i; j++) {
-            if (getVal(elements.item(j-1)) > getVal(elements.item(j))) {
-                await swapVal(elements.item(j-1), elements.item(j), delay)
+    for (let i = elements.length - 1; i > 0; i--) {
+        for (let j = 1; j <= i; j++) {
+            if (getVal(elements.item(j - 1)) > getVal(elements.item(j))) {
+                await swapVal(elements.item(j - 1), elements.item(j), delay)
             }
         }
     }
 }
+
 async function mergeSort(elements) {
     async function merge(elements, leftStart, leftEnd, rightStart, rightEnd, delay) {
         let mergedArray = []
@@ -163,29 +164,29 @@ async function mergeSort(elements) {
     const delay = getDelay()
     let length = 2
     let leftStart, leftEnd, rightStart, rightEnd
-    while (~~(length/2)<elements.length) {
-        for (let i=0; i<elements.length; i+=length) {
+    while (~~(length / 2) < elements.length) {
+        for (let i = 0; i < elements.length; i += length) {
             leftStart = i
-            leftEnd = i+~~(length/2)-1
-            rightStart = i+~~(length/2)
-            rightEnd = i+~~(length)-1
-            if (leftEnd >= elements.length-1) {
+            leftEnd = i + ~~(length / 2) - 1
+            rightStart = i + ~~(length / 2)
+            rightEnd = i + ~~(length) - 1
+            if (leftEnd >= elements.length - 1) {
                 break
             }
-            else if (rightEnd > elements.length-1) {
-                rightEnd = elements.length-1
+            else if (rightEnd > elements.length - 1) {
+                rightEnd = elements.length - 1
             }
             await merge(elements, leftStart, leftEnd, rightStart, rightEnd, delay)
         }
         length *= 2
     }
-
 }
+
 async function quickSort(elements) {
     async function partition(elements, left, right, delay) {
         let i = left - 1
         currOn(elements.item(right))
-        for (let j=left; j<right; j++) {
+        for (let j = left; j < right; j++) {
             if (getVal(elements.item(j)) <= getVal(elements.item(right))) {
                 i++
                 await swapVal(elements.item(i), elements.item(j), delay)
@@ -197,24 +198,92 @@ async function quickSort(elements) {
     }
 
     const delay = getDelay()
-    let stack = [[0, elements.length-1]]
+    let stack = [[0, elements.length - 1]]
     let left, mid, right
     do {
         [left, right] = stack.pop()
         mid = await partition(elements, left, right, delay)
         if (mid + 1 < right) {
-            stack.push([mid+1, right])
+            stack.push([mid + 1, right])
         }
         if (left < mid - 1) {
-            stack.push([left, mid-1])
+            stack.push([left, mid - 1])
         }
     } while (stack.length !== 0)
 }
-function radixSort() {
-    
+
+async function radixSort(elements) {
+    function getMaxDigit(elements) {
+        let maxVal = 0
+        let numOfDigit = 0
+        for (let i = 0; i < elements.length; i++) {
+            val = getVal(elements.item(i))
+            if (val > maxVal) {
+                maxVal = val
+            }
+        }
+        do {
+            maxVal = ~~(maxVal / 10)
+            numOfDigit++
+        } while (maxVal !== 0)
+        return numOfDigit
+    }
+    let maxDigit = getMaxDigit(elements)
+    let count = new Array(10)
+    let index = new Array(10)
+    let temp = new Array(elements.length)
+    let timeout = 20
+
+    const delay = getDelay()
+    let digit_denominator = 1
+    for (let i = 0; i < maxDigit; i++) {
+        count.fill(0)
+        for (let j = 0; j < elements.length; j++) {
+            currOn(elements.item(j))
+            digit = ~~(getVal(elements.item(j)) / digit_denominator) % 10
+            count[digit]++;
+            await new Promise(r => setTimeout(r, timeout));
+            currOff(elements.item(j))
+        }
+        index.fill(0)
+        for (let j = 1; j < 10; j++) {
+            index[j] = index[j - 1] + count[j - 1]
+        }
+        for (let j = 0; j < elements.length; j++) {
+            digit = ~~(getVal(elements.item(j)) / digit_denominator) % 10
+            temp[index[digit]++] = getVal(elements.item(j))
+        }
+        await mergeVal(elements, temp, 0, delay)
+        digit_denominator *= 10;
+    }
 }
-function heapSort() {
+
+async function heapSort(elements) {
+    async function heapify(elements, length, rootIdx, delay) {
+        let largest = rootIdx
+        let left = 2 * rootIdx + 1
+        let right = 2 * rootIdx + 2
+
+        if (left < length && getVal(elements.item(left)) > getVal(elements.item(largest))) {
+            largest = left
+        }
+        if (right < length && getVal(elements.item(right)) > getVal(elements.item(largest))) {
+            largest = right
+        }
+        if (largest != rootIdx) {
+            await swapVal(elements.item(rootIdx), elements.item(largest), delay)
+            await heapify(elements, length, largest, delay)
+        }
+    }
     
+    const delay = getDelay()
+    for (let i=~~((elements.length-1)/2)-1; i >= 0; i--) {
+        await heapify(elements, elements.length, i, delay)
+    }
+    for (let i=elements.length-1; i >= 0; i--) {
+        await swapVal(elements.item(0), elements.item(i), delay, "#50e366")
+        await heapify(elements, i, 0, delay)
+    }
 }
 
 function getVal(element) {
@@ -222,16 +291,16 @@ function getVal(element) {
 }
 
 function setVal(element, val) {
-    element.style.height = val.toString()+"px"
+    element.style.height = val.toString() + "px"
 }
 
 function getDelay() {
     return document.getElementById("delayRange").value
 }
 
-async function swapVal(element1, element2, delay) {
-    element1.style.backgroundColor = "#ca84dd"
-    element2.style.backgroundColor = "#ca84dd"
+async function swapVal(element1, element2, delay, color = "#ca84dd") {
+    element1.style.backgroundColor = color
+    element2.style.backgroundColor = color
     const temp = element1.style.height
     element1.style.height = element2.style.height
     element2.style.height = temp
@@ -241,13 +310,13 @@ async function swapVal(element1, element2, delay) {
 }
 
 async function mergeVal(elements, mergedArray, startIdx, delay) {
-    for (let i=0; i<mergedArray.length; i++) {
-        setVal(elements.item(startIdx+i), mergedArray[i])
-        elements.item(startIdx+i).style.backgroundColor = "#ca84dd"
+    for (let i = 0; i < mergedArray.length; i++) {
+        setVal(elements.item(startIdx + i), mergedArray[i])
+        elements.item(startIdx + i).style.backgroundColor = "#ca84dd"
         await new Promise(r => setTimeout(r, delay));
-        elements.item(startIdx+i).style.backgroundColor = "#5093e3"
+        elements.item(startIdx + i).style.backgroundColor = "#5093e3"
     }
-    
+
 }
 
 
