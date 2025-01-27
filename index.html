@@ -46,13 +46,21 @@
             </div>
             <div class="col"></div>
         </div>
+        <div class="row align-items-center">
+            <div class="col"></div>
+            <div class="col">
+                <label for="arraySizeRange" class="form-label">Array Size</label>
+                <input type="range" class="form-range" min="10" max="99" value="99" id="arraySizeRange" oninput="GenerateArrayBtn()">
+            </div>
+            <div class="col"></div>
+        </div>
     </div>
     <div class="container my-4 text-center">
-        <button type="button" class="btn btn-outline-primary" id="GenerateArrayBtn" onclick="GenerateArrayBtn()">Generate Array</button>
+        <button type="button" class="btn btn-outline-primary" id="GenerateArrayBtn" onclick="GenerateArrayBtn()">Shuffle Array</button>
         <button type="button" class="btn btn-outline-primary" id="SortArrayBtn" onclick="SortArrayBtn()">Sort Array</button>
     </div>
 
-    <div class="container my-2 border-top d-inline-block text-center" id="graph-canvas">
+    <div class="container my-2 border-top d-inline-block" style="width: auto; margin-left: auto; margin-right: auto" id="graph-canvas">
     </div>
 
     <script src="index.js"></script>

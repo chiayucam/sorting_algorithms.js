@@ -28,23 +28,41 @@ function initCanvas(canvas, arraySize) {
 }
 
 function GenerateArrayBtn() {
+    let arraySize = Number(document.getElementById("arraySizeRange").value)
     initCanvas(canvas, arraySize)
 }
 
+function DisableControls() {
+    let controls = GetControlElements();
+    controls.forEach(element => {
+        element.disabled = true
+    });
+}
+
+function EnableControls() {
+    let controls = GetControlElements();
+    controls.forEach(element => {
+        element.disabled = false
+    });
+}
+
+function GetControlElements() {
+    return [
+        document.getElementById("SortArrayBtn"),
+        document.getElementById("GenerateArrayBtn"),
+        document.getElementById("delayRange"),
+        document.getElementById("arraySizeRange")
+    ]
+}
+
 async function SortArrayBtn() {
-    document.getElementById("SortArrayBtn").disabled = true
-    document.getElementById("GenerateArrayBtn").disabled = true
-    document.getElementById("delayRange").disabled = true
+    DisableControls();
 
     const sortingAlgo = document.querySelector('input[name="algoRadioBtn"]:checked').id
-    const delay = document.getElementById("delayRange").value
     console.log(sortingAlgo)
     await sort(sortingAlgo)
 
-
-    document.getElementById("SortArrayBtn").disabled = false
-    document.getElementById("GenerateArrayBtn").disabled = false
-    document.getElementById("delayRange").disabled = false
+    EnableControls();
 }
 
 async function sort(sortingAlgo) {
@@ -319,7 +337,6 @@ async function mergeVal(elements, mergedArray, startIdx, delay) {
 
 }
 
-
-let arraySize = 99
+let arraySize = Number(document.getElementById("arraySizeRange").value)
 let canvas = document.getElementById("graph-canvas")
 canvas = initCanvas(canvas, arraySize)
